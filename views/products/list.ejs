@@ -1,0 +1,30 @@
+<%- include('../partials/header') %>
+
+<div class="space-y-6">
+    <div class="flex justify-between items-center border-b pb-4 border-gray-200">
+        <h1 class="text-3xl font-extrabold tracking-tight text-gray-900">Katalog Produk</h1>
+        <p class="text-sm text-gray-500">Silakan pilih produk yang ingin Anda beli</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <% products.forEach(product => { %>
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col justify-between p-5">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-1"><%= product.name %></h3>
+                    <p class="text-xl font-extrabold text-blue-600 mb-3">Rp <%= product.price.toLocaleString('id-ID') %></p>
+                    <p class="text-sm text-gray-600 mb-4">Sisa Stok: <span class="font-semibold text-gray-900"><%= product.stock %></span></p>
+                </div>
+                
+                <form action="/products/buy" method="POST" class="mt-4 flex gap-2">
+                    <input type="hidden" name="product_id" value="<%= product.id %>">
+                    <input type="number" name="quantity" value="1" min="1" max="<%= product.stock %>" class="w-20 px-2 py-1.5 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" <%= product.stock <= 0 ? 'disabled' : '' %> class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-1.5 px-4 rounded transition text-sm shadow-sm">
+                        <%= product.stock <= 0 ? 'Habis' : 'Beli Sekarang' %>
+                    </button>
+                </form>
+            </div>
+        <% }) %>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

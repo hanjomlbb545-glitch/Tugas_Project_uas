@@ -1,0 +1,38 @@
+<%- include('../partials/header') %>
+
+<div class="max-w-md mx-auto mt-12 bg-white p-8 rounded-lg shadow-md border border-gray-100">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Daftar Akun Baru</h2>
+    
+    <% if (message) { %>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
+            <%= message %>
+        </div>
+    <% } %>
+
+    <form action="/auth/register" method="POST" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+            <input type="text" name="username" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input type="password" name="password" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Mendaftar Sebagai</label>
+            <select name="role" required class="w-full px-3 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="buyer">Pembeli (Dapat Membeli Barang)</option>
+                <option value="seller">Penjual (Dapat Melihat Barang Terjual)</option>
+            </select>
+        </div>
+        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded transition shadow">
+            Registrasi
+        </button>
+    </form>
+    
+    <p class="text-sm text-center text-gray-600 mt-4">
+        Sudah punya akun? <a href="/auth/login" class="text-blue-600 hover:underline">Login di sini</a>
+    </p>
+</div>
+
+<%- include('../partials/footer') %>
