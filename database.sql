@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS uas_ecommerce;
-USE uas_ecommerce;
-
+-- CREATE DATABASE IF NOT EXISTS uas_ecommerce;
+-- USE uas_ecommerce;
+USE railway;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
