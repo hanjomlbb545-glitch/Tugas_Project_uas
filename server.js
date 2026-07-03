@@ -4,7 +4,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const http = require('http');
 const { Server } = require('socket.io');
-const db = require('./config/db'); // Sesuai dengan file db.js yang kamu edit tadi
+const db = require('./config/db'); // Memakai koneksi database asli punyamu
 
 dotenv.config();
 
@@ -39,42 +39,30 @@ io.on('connection', (socket) => {
 });
 
 // ========================================================
-// JALUR TAMBAH BARANG LANGSUNG MENGGUNAKAN QUERY DATABASE ASLI LU
+// JALUR DRIVER LANGSUNG TAMBAH BARANG (PAS DENGAN WORKBENCH LU)
 // ========================================================
 
-// 1. Menampilkan Halaman Form Tambah Produk
-app.get('/seller/products/add', async (req, res) => {
-    try {
-        // Ambil kategori langsung dari tabel categories pake query database kalian
-        const [categories] = await db.query('SELECT * FROM categories').catch(() => [[]]);
-        
-        res.render('seller/addProduct', { 
-            title: 'Tambah Produk Baru',
-            categories: categories || [],
-            success_msg: req.flash ? req.flash('success_msg') : [],
-            error_msg: req.flash ? req.flash('error_msg') : []
-        });
-    } catch (error) {
-        console.error(error);
-        res.redirect('/seller/sales');
-    }
+// 1. Menampilkan Form Tambah Produk
+app.get('/seller/products/add', (req, res) => {
+    res.render('seller/addProduct', { title: 'Tambah Produk Baru' });
 });
 
-// 2. Memproses Simpan Produk Baru ke Database Cloud Railway
+// 2. Memproses Simpan Produk (Hanya kolom: name, price, stock, seller_id, image)
 app.post('/seller/products/add', async (req, res) => {
     try {
-        const { name, price, stock, description, categoryId, image } = req.body;
-        const sellerId = req.session.user ? req.session.user.id : null;
-
-        // Query insert manual sesuai struktur tabel SQL kalian
-        const queryStr = 'INSERT INTO products (name, price, stock, description, category_id, seller_id, image) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        const { name, price, stock, image } = req.body;
+        
+        // Ambil id penjual dari session user login, default ke 1 jika kosong
+        const sellerId = req.session.user ? req.session.user.id : 1;
         const imgUrl = image || '/img/default-product.png';
 
-        await db.query(queryStr, [name, price, stock, description, categoryId, sellerId, imgUrl]);
+        // Query INSERT yang pas dengan kolom tabel products milikmu
+        const queryStr = 'INSERT INTO products (name, price, stock, seller_id, image) VALUES (?, ?, ?, ?, ?)';
+        await db.query(queryStr, [name, parseInt(price), parseInt(stock), sellerId, imgUrl]);
 
-        res.redirect('/seller/sales');
+        res.redirect('/seller/sales'); // Sukses, balikkan ke dashboard jualan
     } catch (error) {
-        console.error("Gagal simpan produk:", error);
+        console.error("Gagal menyimpan produk:", error);
         res.redirect('/seller/products/add');
     }
 });
