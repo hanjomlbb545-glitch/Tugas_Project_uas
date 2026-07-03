@@ -2,15 +2,15 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const dotenv = require('dotenv');
-const http = require('http'); 
-const { Server } = require('socket.io'); 
-const { Product, Category } = require('./models'); // Ambil model database untuk tambah produk
+const http = require('http');
+const { Server } = require('socket.io');
+const db = require('./config/db'); // Sesuai dengan file db.js yang kamu edit tadi
 
 dotenv.config();
 
 const app = express();
-const server = http.createServer(app); 
-const io = new Server(server); 
+const server = http.createServer(app);
+const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 
@@ -39,51 +39,45 @@ io.on('connection', (socket) => {
 });
 
 // ========================================================
-// JALUR LANGSUNG (ROUTE DRIVER) UNTUK FITUR TAMBAH BARANG
+// JALUR TAMBAH BARANG LANGSUNG MENGGUNAKAN QUERY DATABASE ASLI LU
 // ========================================================
 
-// 1. Menampilkan Form Tambah Produk
+// 1. Menampilkan Halaman Form Tambah Produk
 app.get('/seller/products/add', async (req, res) => {
     try {
-        // Ambil semua kategori dari database, kalau kosong set array kosong
-        const categories = await Category.findAll().catch(() => []);
+        // Ambil kategori langsung dari tabel categories pake query database kalian
+        const [categories] = await db.query('SELECT * FROM categories').catch(() => [[]]);
+        
         res.render('seller/addProduct', { 
             title: 'Tambah Produk Baru',
-            categories: categories || []
+            categories: categories || [],
+            success_msg: req.flash ? req.flash('success_msg') : [],
+            error_msg: req.flash ? req.flash('error_msg') : []
         });
     } catch (error) {
-        console.error("Error muat halaman:", error);
+        console.error(error);
         res.redirect('/seller/sales');
     }
 });
 
-// 2. Memproses Simpan Produk Baru ke Database Cloud
+// 2. Memproses Simpan Produk Baru ke Database Cloud Railway
 app.post('/seller/products/add', async (req, res) => {
     try {
         const { name, price, stock, description, categoryId, image } = req.body;
-        
-        if (!name || !price || !stock || !categoryId) {
-            return res.redirect('/seller/products/add');
-        }
+        const sellerId = req.session.user ? req.session.user.id : null;
 
-        // Simpan langsung ke database cloud
-        await Product.create({
-            name,
-            price: parseFloat(price),
-            stock: parseInt(stock),
-            description,
-            categoryId: parseInt(categoryId),
-            image: image || '/img/default-product.png',
-            sellerId: req.session.user ? req.session.user.id : 1 // Ambil ID penjual dari session, default ke 1 jika kosong
-        });
+        // Query insert manual sesuai struktur tabel SQL kalian
+        const queryStr = 'INSERT INTO products (name, price, stock, description, category_id, seller_id, image) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        const imgUrl = image || '/img/default-product.png';
 
-        res.redirect('/seller/sales'); // Sukses, balikkan ke dashboard
+        await db.query(queryStr, [name, price, stock, description, categoryId, sellerId, imgUrl]);
+
+        res.redirect('/seller/sales');
     } catch (error) {
-        console.error("Gagal menyimpan produk:", error);
+        console.error("Gagal simpan produk:", error);
         res.redirect('/seller/products/add');
     }
 });
-
 // ========================================================
 
 const authRoutes = require('./routes/authRoutes');
