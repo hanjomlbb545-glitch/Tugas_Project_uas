@@ -47,26 +47,21 @@ app.get('/seller/products/add', (req, res) => {
     res.render('seller/addProduct', { title: 'Tambah Produk Baru' });
 });
 
-// 2. Memproses Simpan Produk (Hanya kolom: name, price, stock, seller_id, image)
 app.post('/seller/products/add', async (req, res) => {
     try {
-        const { name, price, stock, image } = req.body;
-        
-        // Ambil id penjual dari session user login, default ke 1 jika kosong
+        const { name, price, stock } = req.body;
         const sellerId = req.session.user ? req.session.user.id : 1;
-        const imgUrl = image || '/img/default-product.png';
 
-        // Query INSERT yang pas dengan kolom tabel products milikmu
-        const queryStr = 'INSERT INTO products (name, price, stock, seller_id, image) VALUES (?, ?, ?, ?, ?)';
-        await db.query(queryStr, [name, parseInt(price), parseInt(stock), sellerId, imgUrl]);
+        // QUERY TANPA IMAGE (Hanya 4 kolom yang ada di tabel)
+        const queryStr = 'INSERT INTO products (name, price, stock, seller_id) VALUES (?, ?, ?, ?)';
+        await db.query(queryStr, [name, parseInt(price), parseInt(stock), sellerId]);
 
-        res.redirect('/seller/sales'); // Sukses, balikkan ke dashboard jualan
+        res.redirect('/seller/sales'); 
     } catch (error) {
-        console.error("Gagal menyimpan produk:", error);
+        console.error("Gagal simpan:", error);
         res.redirect('/seller/products/add');
     }
 });
-// ========================================================
 
 const authRoutes = require('./routes/authRoutes');
 const webRoutes = require('./routes/webRoutes');
