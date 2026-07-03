@@ -1,0 +1,51 @@
+<%- include('../partials/header') %>
+
+<div class="max-w-2xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-md border border-gray-200">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Tambah Barang Dagangan Baru</h2>
+    <hr class="mb-6">
+
+    <form action="/seller/products/add" method="POST" class="space-y-4">
+        <div>
+            <label for="name" class="block text-sm font-medium text-gray-700">Nama Barang</label>
+            <input type="text" id="name" name="name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Contoh: Sepatu Olahraga Keren" required>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="price" class="block text-sm font-medium text-gray-700">Harga Satuan (Rp)</label>
+                <input type="number" id="price" name="price" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="0" required>
+            </div>
+            <div>
+                <label Detroit for="stock" class="block text-sm font-medium text-gray-700">Stok Barang</label>
+                <input type="number" id="stock" name="stock" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="0" required>
+            </div>
+        </div>
+
+        <div>
+            <label for="categoryId" class="block text-sm font-medium text-gray-700">Kategori Barang</label>
+            <select id="categoryId" name="categoryId" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                <option value="" disabled selected>-- Pilih Kategori --</option>
+                <% categories.forEach(cat => { %>
+                    <option value="<%= cat.id %>"><%= cat.name %></option>
+                <% }) %>
+            </select>
+        </div>
+
+        <div>
+            <label for="image" class="block text-sm font-medium text-gray-700">URL Foto Produk</label>
+            <input type="text" id="image" name="image" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Contoh: https://linkgambar.com/sepatu.jpg">
+        </div>
+
+        <div>
+            <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi Barang</label>
+            <textarea id="description" name="description" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Jelaskan kondisi detail barang daganganmu..."></textarea>
+        </div>
+
+        <div class="flex justify-between items-center pt-4">
+            <a href="/seller/sales" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-md text-sm transition-colors">Batal</a>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md text-sm shadow-sm transition-colors">Gas Pajang Barang!</button>
+        </div>
+    </form>
+</div>
+
+<%- include('../partials/footer') %>
