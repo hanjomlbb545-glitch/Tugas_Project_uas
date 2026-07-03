@@ -22,5 +22,13 @@
     "express-session": "^1.19.0",
     "mysql2": "^3.22.5",
     "socket.io": "^4.8.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanjomlbb545-glitch/mishael_togatorop8.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hanjomlbb545-glitch/mishael_togatorop8/issues"
+  },
+  "homepage": "https://github.com/hanjomlbb545-glitch/mishael_togatorop8#readme"
 }
