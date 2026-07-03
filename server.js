@@ -27,26 +27,25 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Tempel io ke objek req agar bisa dipanggil di dalam controller nantinya
 app.use((req, res, next) => {
     req.io = io;
     res.locals.user = req.session.user || null;
     next();
 });
 
-// Koneksi Socket.io
+
 io.on('connection', (socket) => {
     console.log('User terhubung ke WebSocket: ' + socket.id);
 });
 
-// Import & Gunakan Routes resmi dari foldermu
+
 const authRoutes = require('./routes/authRoutes');
 const webRoutes = require('./routes/webRoutes');
 
 app.use('/auth', authRoutes);
 app.use('/', webRoutes);
 
-// JALANKAN SERVER DI PORT 3000
+
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on: http://localhost:${PORT}`);
 });
